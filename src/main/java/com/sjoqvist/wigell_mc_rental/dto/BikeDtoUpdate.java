@@ -1,0 +1,13 @@
+package com.sjoqvist.wigell_mc_rental.dto;
+
+import com.sjoqvist.wigell_mc_rental.entity.BikeStatus;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
+public record BikeDtoUpdate(
+        @NotBlank String model,
+        @NotBlank String manufacturer,
+        @NotNull @Positive Double dailyRateSek,
+        @NotNull BikeStatus status) {}
