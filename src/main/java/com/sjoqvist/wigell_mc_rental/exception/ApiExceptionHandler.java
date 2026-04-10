@@ -77,4 +77,16 @@ public class ApiExceptionHandler {
                         HttpStatus.NOT_FOUND.value()),
                 HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(value = Exception.class)
+    public ResponseEntity<ApiErrorDto> handleException(Exception e, HttpServletRequest req) {
+        return new ResponseEntity<>(
+                new ApiErrorDto(
+                        e.getMessage(),
+                        LocalDateTime.now(),
+                        "Internal Server Error",
+                        req.getRequestURI(),
+                        HttpStatus.INTERNAL_SERVER_ERROR.value()),
+                HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

@@ -5,13 +5,12 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: create
+    show-sql: false
     properties:
       hibernate:
         format_sql: false
     defer-datasource-initialization: true
-
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -29,3 +28,8 @@ spring:
 
 server:
   port: 8585
+
+logging:
+  level:
+    root: INFO
+    com.sjoqvist.wigell_mc_rental: DEBUG

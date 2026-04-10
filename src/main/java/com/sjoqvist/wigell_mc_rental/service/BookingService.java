@@ -1,77 +1,20 @@
 package com.sjoqvist.wigell_mc_rental.service;
 
-import com.sjoqvist.wigell_mc_rental.entity.BikeStatus;
-import com.sjoqvist.wigell_mc_rental.entity.Booking;
-import com.sjoqvist.wigell_mc_rental.entity.BookingStatus;
-import com.sjoqvist.wigell_mc_rental.exception.BikeNotFoundException;
-import com.sjoqvist.wigell_mc_rental.exception.CustomerNotFoundException;
-import com.sjoqvist.wigell_mc_rental.repository.BikeRepo;
-import com.sjoqvist.wigell_mc_rental.repository.BookingRepo;
-import com.sjoqvist.wigell_mc_rental.repository.CustomerRepo;
+import com.sjoqvist.wigell_mc_rental.dto.BikeDto;
+import com.sjoqvist.wigell_mc_rental.dto.BikeDtoCreate;
+import com.sjoqvist.wigell_mc_rental.dto.BikeDtoUpdate;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.time.LocalDate;
+public interface BookingService {
+    BikeDto create(BikeDtoCreate dto);
 
-@Service
-public class BookingService {
-    private final BikeRepo bikeRepo;
-    private final CustomerRepo customerRepo;
-    private final BookingRepo bookingRepo;
+    Page<BikeDto> findAll(Pageable pageable);
 
-    public BookingService(BikeRepo bikeRepo, BookingRepo bookingRepo) {
-        this.bikeRepo = bikeRepo;
-        this.bookingRepo = bookingRepo;
-    }
+    BikeDto findById(Long id);
 
-    @Transactional
-    public void create(Long customerId, Long bikeId, LocalDate from, LocalDate to) {
-        var customer =
-                customerRepo
-                        .findById(customerId)
-                        .orElseThrow(() -> new CustomerNotFoundException(customerId));
-        var bike = bikeRepo.findById(bikeId).orElseThrow(() -> new BikeNotFoundException(bikeId));
+    BikeDto update(Long id, BikeDtoUpdate dto);
 
-        if (from.isBefore(LocalDate.now())) {
-            throw new RuntimeException("from is before now");
-        }
-
-        if (to.isBefore(from)) {
-            throw new RuntimeException("to be before from");
-        }
-
-        if (bike.getStatus().equals(BikeStatus.UNAVAILABLE)) {
-            throw new RuntimeException("bike is unavailable");
-        }
-
-        var bookings = bookingRepo.findAllByBikeId_AndStatusActiveOrReserved(bikeId);
-        bookings.forEach(
-                booking -> {
-                    if (!from.isBefore(booking.getFromDate())
-                            && !from.isAfter(booking.getToDate())) {
-                        throw new RuntimeException("from and to be before from and to be after");
-                    }
-
-                    if (!to.isBefore(booking.getFromDate()) && !to.isAfter(booking.getToDate())) {
-                        throw new RuntimeException("from and to be before from and to be after");
-                    }
-                });
-
-        var booking =
-                new Booking(
-                        bike,
-                        customer,
-                        from,
-                        to,
-                        null,
-                        from.isEqual(LocalDate.now())
-                                ? BookingStatus.ACTIVE
-                                : BookingStatus.RESERVED);
-
-        bike.setStatus(BikeStatus.UNAVAILABLE);
-
-        bikeRepo.save(bike);
-        bookingRepo.save(booking);
-    }
+    void delete(Long id);
 }

@@ -3,28 +3,30 @@ package com.sjoqvist.wigell_mc_rental.controller;
 import com.sjoqvist.wigell_mc_rental.dto.CustomerDto;
 import com.sjoqvist.wigell_mc_rental.dto.CustomerDtoCreate;
 import com.sjoqvist.wigell_mc_rental.dto.CustomerDtoUpdate;
-import com.sjoqvist.wigell_mc_rental.service.CustomerService;
+import com.sjoqvist.wigell_mc_rental.service.CustomerServiceImpl;
 
 import jakarta.validation.Valid;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/v1/customers")
 public class CustomerController {
-    private final CustomerService customerService;
+    private final CustomerServiceImpl customerService;
 
-    public CustomerController(CustomerService customerService) {
+    public CustomerController(CustomerServiceImpl customerService) {
         this.customerService = customerService;
     }
 
     @GetMapping
-    public ResponseEntity<List<CustomerDto>> getCustomers() {
-        return ResponseEntity.ok(customerService.findAll());
+    public ResponseEntity<Page<CustomerDto>> getCustomers(
+            @PageableDefault(page = 0, size = 10) Pageable pageable) {
+        return ResponseEntity.ok(customerService.findAll(pageable));
     }
 
     @GetMapping("/{id}")
