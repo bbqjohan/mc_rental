@@ -1,6 +1,6 @@
-package com.sjoqvist.wigell_mc_rental.entity;
+package com.sjoqvist.wigell_mc_rental.security;
 
-import com.sjoqvist.wigell_mc_rental.security.Role;
+import com.sjoqvist.wigell_mc_rental.entity.Customer;
 
 import jakarta.persistence.*;
 

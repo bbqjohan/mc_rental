@@ -3,7 +3,6 @@ package com.sjoqvist.wigell_mc_rental.service;
 import com.sjoqvist.wigell_mc_rental.dto.CustomerDto;
 import com.sjoqvist.wigell_mc_rental.dto.CustomerDtoCreate;
 import com.sjoqvist.wigell_mc_rental.dto.CustomerDtoUpdate;
-import com.sjoqvist.wigell_mc_rental.entity.AppUser;
 import com.sjoqvist.wigell_mc_rental.exception.AddressNotFoundException;
 import com.sjoqvist.wigell_mc_rental.exception.CustomerNotFoundException;
 import com.sjoqvist.wigell_mc_rental.exception.UserExistsException;
@@ -11,12 +10,14 @@ import com.sjoqvist.wigell_mc_rental.mapper.CustomerMapper;
 import com.sjoqvist.wigell_mc_rental.repository.AddressRepo;
 import com.sjoqvist.wigell_mc_rental.repository.AppUserRepo;
 import com.sjoqvist.wigell_mc_rental.repository.CustomerRepo;
+import com.sjoqvist.wigell_mc_rental.security.AppUser;
 import com.sjoqvist.wigell_mc_rental.security.Role;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,12 +29,17 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepo customerRepo;
     private final AddressRepo addressRepo;
     private final AppUserRepo appUserRepo;
+    private final PasswordEncoder passwordEncoder;
 
     public CustomerServiceImpl(
-            CustomerRepo customerRepo, AddressRepo addressRepo, AppUserRepo appUserRepo) {
+            CustomerRepo customerRepo,
+            AddressRepo addressRepo,
+            AppUserRepo appUserRepo,
+            PasswordEncoder passwordEncoder) {
         this.customerRepo = customerRepo;
         this.addressRepo = addressRepo;
         this.appUserRepo = appUserRepo;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional
@@ -63,7 +69,10 @@ public class CustomerServiceImpl implements CustomerService {
             entity.setAddress(address);
 
             var newUser =
-                    new AppUser(dto.user().username(), dto.user().password(), Set.of(Role.USER));
+                    new AppUser(
+                            dto.user().username(),
+                            passwordEncoder.encode(dto.user().password()),
+                            Set.of(Role.USER));
             newUser.setCustomer(entity);
 
             entity = customerRepo.save(entity);

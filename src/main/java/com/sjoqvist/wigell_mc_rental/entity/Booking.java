@@ -2,7 +2,11 @@ package com.sjoqvist.wigell_mc_rental.entity;
 
 import jakarta.persistence.*;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "booking")
@@ -11,11 +15,11 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "bike_id", nullable = false)
     private Bike bike;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
@@ -25,12 +29,20 @@ public class Booking {
     @Column(nullable = false)
     private LocalDate toDate;
 
-    @Column(name = "price_total")
-    private Double priceTotal;
+    @Column(name = "price_total_sek", nullable = false)
+    private Double priceTotalSek;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private BookingStatus status;
+
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     protected Booking() {}
 
@@ -39,14 +51,30 @@ public class Booking {
             Customer customer,
             LocalDate fromDate,
             LocalDate toDate,
-            Double priceTotal,
+            Double priceTotalSek,
             BookingStatus status) {
         this.bike = bike;
         this.customer = customer;
         this.fromDate = fromDate;
         this.toDate = toDate;
-        this.priceTotal = priceTotal;
+        this.priceTotalSek = priceTotalSek;
         this.status = status;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public Long getId() {
@@ -89,12 +117,12 @@ public class Booking {
         this.toDate = toDate;
     }
 
-    public Double getPriceTotal() {
-        return priceTotal;
+    public Double getPriceTotalSek() {
+        return priceTotalSek;
     }
 
-    public void setPriceTotal(Double priceTotal) {
-        this.priceTotal = priceTotal;
+    public void setPriceTotalSek(Double priceTotalSek) {
+        this.priceTotalSek = priceTotalSek;
     }
 
     public BookingStatus getStatus() {

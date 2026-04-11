@@ -1,20 +1,20 @@
 package com.sjoqvist.wigell_mc_rental.service;
 
-import com.sjoqvist.wigell_mc_rental.dto.BikeDto;
-import com.sjoqvist.wigell_mc_rental.dto.BikeDtoCreate;
-import com.sjoqvist.wigell_mc_rental.dto.BikeDtoUpdate;
+import com.sjoqvist.wigell_mc_rental.dto.*;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface BookingService {
-    BikeDto create(BikeDtoCreate dto);
+    BookingDto create(BookingCreateDto dto);
 
-    Page<BikeDto> findAll(Pageable pageable);
+    Page<BookingDto> findAll(Pageable pageable);
 
-    BikeDto findById(Long id);
+    BookingDto findById(Long id);
 
-    BikeDto update(Long id, BikeDtoUpdate dto);
+    BookingDto update(Long id, BookingUpdateDto dto);
 
-    void delete(Long id);
+    BookingDto changeOngoingBooking(Long id, BookingPatchDatesDto dto);
+
+    //    void delete(Long id);
 }

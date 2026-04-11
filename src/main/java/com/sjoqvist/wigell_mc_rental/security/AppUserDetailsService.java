@@ -1,6 +1,5 @@
-package com.sjoqvist.wigell_mc_rental.service;
+package com.sjoqvist.wigell_mc_rental.security;
 
-import com.sjoqvist.wigell_mc_rental.entity.AppUser;
 import com.sjoqvist.wigell_mc_rental.repository.AppUserRepo;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

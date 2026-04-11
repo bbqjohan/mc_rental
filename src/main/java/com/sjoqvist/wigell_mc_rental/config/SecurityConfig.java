@@ -2,6 +2,7 @@ package com.sjoqvist.wigell_mc_rental.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -33,6 +34,8 @@ public class SecurityConfig {
                                         .hasRole("ADMIN")
                                         .requestMatchers("/api/v1/bikes")
                                         .hasRole("ADMIN")
+                                        .requestMatchers(HttpMethod.POST, "/api/v1/bookings")
+                                        .hasRole("USER")
                                         //
                                         // .requestMatchers("/api/v1/bikes/**")
                                         //                                        .hasRole("ADMIN")

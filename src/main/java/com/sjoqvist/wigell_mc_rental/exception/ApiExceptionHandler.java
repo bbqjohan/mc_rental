@@ -20,7 +20,7 @@ public class ApiExceptionHandler {
                 new ApiErrorDto(
                         e.getMessage(),
                         LocalDateTime.now(),
-                        "Not found",
+                        "Not Found",
                         req.getRequestURI(),
                         HttpStatus.NOT_FOUND.value()),
                 HttpStatus.NOT_FOUND);
@@ -33,7 +33,7 @@ public class ApiExceptionHandler {
                 new ApiErrorDto(
                         e.getMessage(),
                         LocalDateTime.now(),
-                        "Not found",
+                        "Not Found",
                         req.getRequestURI(),
                         HttpStatus.NOT_FOUND.value()),
                 HttpStatus.NOT_FOUND);
@@ -72,10 +72,49 @@ public class ApiExceptionHandler {
                 new ApiErrorDto(
                         e.getMessage(),
                         LocalDateTime.now(),
-                        "Not found",
+                        "Not Found",
                         req.getRequestURI(),
                         HttpStatus.NOT_FOUND.value()),
                 HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = BikeNotAvailableException.class)
+    public ResponseEntity<ApiErrorDto> handleBikeNotAvailableException(
+            BikeNotAvailableException e, HttpServletRequest req) {
+        return new ResponseEntity<>(
+                new ApiErrorDto(
+                        e.getMessage(),
+                        LocalDateTime.now(),
+                        "Conflict",
+                        req.getRequestURI(),
+                        HttpStatus.CONFLICT.value()),
+                HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(value = BookingNotFoundException.class)
+    public ResponseEntity<ApiErrorDto> handleBookingNotFoundException(
+            BookingNotFoundException e, HttpServletRequest req) {
+        return new ResponseEntity<>(
+                new ApiErrorDto(
+                        e.getMessage(),
+                        LocalDateTime.now(),
+                        "Not Found",
+                        req.getRequestURI(),
+                        HttpStatus.NOT_FOUND.value()),
+                HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = InvalidBookingDateException.class)
+    public ResponseEntity<ApiErrorDto> handleInvalidBookingDateException(
+            InvalidBookingDateException e, HttpServletRequest req) {
+        return new ResponseEntity<>(
+                new ApiErrorDto(
+                        e.getMessage(),
+                        LocalDateTime.now(),
+                        "Conflict",
+                        req.getRequestURI(),
+                        HttpStatus.CONFLICT.value()),
+                HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(value = Exception.class)

@@ -1,0 +1,18 @@
+package com.sjoqvist.wigell_mc_rental.dto;
+
+import com.sjoqvist.wigell_mc_rental.entity.BookingStatus;
+
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
+import java.time.LocalDate;
+
+public record BookingDto(
+        @NotNull @Positive Long bookingId,
+        @NotNull @Positive Long customerId,
+        @NotNull @Positive Long bikeId,
+        @NotNull LocalDate from,
+        @NotNull LocalDate to,
+        @NotNull Double priceTotalSek,
+        @NotNull Double priceTotalGbp,
+        @NotNull BookingStatus status) {}
