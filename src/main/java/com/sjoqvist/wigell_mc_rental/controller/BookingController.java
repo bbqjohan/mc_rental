@@ -60,7 +60,7 @@ public class BookingController {
     @PutMapping("/{id}")
     public ResponseEntity<BookingDto> updateBooking(
             @PathVariable Long id, @RequestBody @Valid BookingUpdateDto dto) {
-        return ResponseEntity.ok(bookingService.update(id, dto));
+        return ResponseEntity.ok(bookingService.updateBooking(id, dto));
     }
 
     @PatchMapping("/{id}")

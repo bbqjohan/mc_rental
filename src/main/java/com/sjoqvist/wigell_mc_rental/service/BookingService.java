@@ -16,7 +16,7 @@ public interface BookingService {
 
     List<BookingDto> findAllByCustomerId(Long customerId);
 
-    BookingDto update(Long id, BookingUpdateDto dto);
+    BookingDto updateBooking(Long id, BookingUpdateDto dto);
 
     BookingDto patchBooking(Long id, BookingPatchDto dto);
 
