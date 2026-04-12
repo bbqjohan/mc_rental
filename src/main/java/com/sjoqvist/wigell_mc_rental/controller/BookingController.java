@@ -2,7 +2,7 @@ package com.sjoqvist.wigell_mc_rental.controller;
 
 import com.sjoqvist.wigell_mc_rental.dto.BookingCreateDto;
 import com.sjoqvist.wigell_mc_rental.dto.BookingDto;
-import com.sjoqvist.wigell_mc_rental.dto.BookingPatchDatesDto;
+import com.sjoqvist.wigell_mc_rental.dto.BookingPatchDto;
 import com.sjoqvist.wigell_mc_rental.dto.BookingUpdateDto;
 import com.sjoqvist.wigell_mc_rental.service.BookingService;
 
@@ -64,9 +64,10 @@ public class BookingController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<BookingDto> updateBooking(
-            @PathVariable Long id, @RequestBody @Valid BookingPatchDatesDto dto) {
-        return ResponseEntity.ok(bookingService.changeOngoingBooking(id, dto));
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<BookingDto> patchBooking(
+            @PathVariable Long id, @RequestBody @Valid BookingPatchDto dto) {
+        return ResponseEntity.ok(bookingService.patchBooking(id, dto));
     }
 
     @DeleteMapping("/{id}")

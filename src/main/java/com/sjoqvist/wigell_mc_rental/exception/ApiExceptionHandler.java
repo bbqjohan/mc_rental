@@ -131,6 +131,32 @@ public class ApiExceptionHandler {
                 HttpStatus.FORBIDDEN);
     }
 
+    @ExceptionHandler(value = IllegalStateException.class)
+    public ResponseEntity<ApiErrorDto> handleIllegalStateException(
+            IllegalStateException e, HttpServletRequest req) {
+        return new ResponseEntity<>(
+                new ApiErrorDto(
+                        e.getMessage(),
+                        LocalDateTime.now(),
+                        HttpStatus.CONFLICT.getReasonPhrase(),
+                        req.getRequestURI(),
+                        HttpStatus.CONFLICT.value()),
+                HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(value = IllegalArgumentException.class)
+    public ResponseEntity<ApiErrorDto> handleIllegalArgumentException(
+            IllegalArgumentException e, HttpServletRequest req) {
+        return new ResponseEntity<>(
+                new ApiErrorDto(
+                        e.getMessage(),
+                        LocalDateTime.now(),
+                        HttpStatus.CONFLICT.getReasonPhrase(),
+                        req.getRequestURI(),
+                        HttpStatus.CONFLICT.value()),
+                HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<ApiErrorDto> handleException(Exception e, HttpServletRequest req) {
         return new ResponseEntity<>(

@@ -2,6 +2,7 @@ package com.sjoqvist.wigell_mc_rental.entity;
 
 import jakarta.persistence.*;
 
+import org.hibernate.annotations.Check;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "booking")
+@Check(constraints = "to_date >= from_date")
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

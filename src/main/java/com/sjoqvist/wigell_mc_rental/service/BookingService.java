@@ -18,7 +18,7 @@ public interface BookingService {
 
     BookingDto update(Long id, BookingUpdateDto dto);
 
-    BookingDto changeOngoingBooking(Long id, BookingPatchDatesDto dto);
+    BookingDto patchBooking(Long id, BookingPatchDto dto);
 
     void delete(Long id);
 }

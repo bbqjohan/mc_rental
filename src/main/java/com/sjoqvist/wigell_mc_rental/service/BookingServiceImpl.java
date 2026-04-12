@@ -2,7 +2,7 @@ package com.sjoqvist.wigell_mc_rental.service;
 
 import com.sjoqvist.wigell_mc_rental.dto.BookingCreateDto;
 import com.sjoqvist.wigell_mc_rental.dto.BookingDto;
-import com.sjoqvist.wigell_mc_rental.dto.BookingPatchDatesDto;
+import com.sjoqvist.wigell_mc_rental.dto.BookingPatchDto;
 import com.sjoqvist.wigell_mc_rental.dto.BookingUpdateDto;
 import com.sjoqvist.wigell_mc_rental.entity.BookingStatus;
 import com.sjoqvist.wigell_mc_rental.exception.*;
@@ -179,74 +179,57 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Transactional
-    public BookingDto changeOngoingBooking(Long id, BookingPatchDatesDto dto) {
-        try {
-            log.info("Updating booking dates. id={}, payload={} ", id, dto);
+    public BookingDto patchBooking(Long bookingId, BookingPatchDto dto) {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        var username = securityContext.getAuthentication().getName();
 
-            var booking =
-                    bookingRepo.findById(id).orElseThrow(() -> new BookingNotFoundException(id));
+        var user =
+                appUserRepo
+                        .findByUsername(username)
+                        .orElseThrow(() -> new UsernameNotFoundException(username));
 
-            if (booking.getStatus().equals(BookingStatus.COMPLETED)) {
-                throw new RuntimeException("Booking is already completed.");
-            }
+        var booking =
+                bookingRepo
+                        .findById(bookingId)
+                        .orElseThrow(() -> new BookingNotFoundException(bookingId));
 
-            var bike =
-                    dto.bikeId() != null
-                            ? bikeRepo.findById(dto.bikeId())
-                                    .orElseThrow(() -> new BikeNotFoundException(dto.bikeId()))
-                            : booking.getBike();
-
-            var nextBookings =
-                    bookingRepo.findAllByBikeIdAndFromDateIsAfter(bike.getId(), LocalDate.now());
-
-            assertFromDateNotBeforeToday(dto.from());
-
-            nextBookings.forEach(
-                    nextBooking -> {
-                        if (isDateWithinRange(
-                                dto.from(), nextBooking.getFromDate(), nextBooking.getToDate())) {
-                            throw new InvalidBookingDateException(
-                                    String.format(
-                                            "The 'from' date %s is unavailable for bike %d",
-                                            dto.from(), nextBooking.getBike().getId()),
-                                    dto.from());
-                        }
-
-                        if (isDateWithinRange(
-                                dto.to(), nextBooking.getFromDate(), nextBooking.getToDate())) {
-                            throw new InvalidBookingDateException(
-                                    String.format(
-                                            "The 'to' date %s is unavailable for bike %d",
-                                            dto.to(), nextBooking.getBike().getId()),
-                                    dto.to());
-                        }
-                    });
-
-            var priceTotal = bookingPriceCalculator.calculateTotalPrice(dto.from(), dto.to(), bike);
-            var bookingStatus =
-                    dto.from().isEqual(LocalDate.now())
-                            ? BookingStatus.ACTIVE
-                            : BookingStatus.RESERVED;
-
-            booking.setFromDate(dto.from());
-            booking.setToDate(dto.to());
-            booking.setBike(bike);
-            booking.setPriceTotalSek(priceTotal);
-            booking.setStatus(bookingStatus);
-            booking = bookingRepo.save(booking);
-
-            log.info("Successfully updated booking dates. id={}, payload={} ", id, dto);
-
-            return BookingMapper.toBookingDto(booking);
-        } catch (Exception e) {
-            log.error(
-                    "Failed to update booking. id={}, payload={}, error={}",
-                    id,
-                    dto,
-                    e.getMessage());
-
-            throw e;
+        if (!user.getCustomer().getId().equals(booking.getCustomer().getId())) {
+            throw new AccessDeniedException("You cannot change other customers' bookings");
         }
+
+        var newBike = booking.getBike();
+
+        if (dto.bikeId() != null) {
+            newBike =
+                    bikeRepo.findById(dto.bikeId())
+                            .orElseThrow(() -> new BikeNotFoundException(dto.bikeId()));
+        }
+
+        LocalDate newFrom = dto.from() != null ? dto.from() : booking.getFromDate();
+        LocalDate newTo = dto.to() != null ? dto.to() : booking.getToDate();
+
+        if (newTo.isBefore(newFrom)) {
+            throw new IllegalArgumentException("The to-date cannot be before the from-date.");
+        }
+
+        boolean hasConflict =
+                !bookingRepo
+                        .findConflictingBookings(newBike.getId(), bookingId, newFrom, newTo)
+                        .isEmpty();
+
+        if (hasConflict) {
+            throw new IllegalStateException("Bike is not available for the selected dates");
+        }
+
+        booking.setBike(newBike);
+        booking.setFromDate(newFrom);
+        booking.setToDate(newTo);
+        booking.setPriceTotalSek(
+                bookingPriceCalculator.calculateTotalPrice(newFrom, newTo, newBike));
+
+        bookingRepo.save(booking);
+
+        return BookingMapper.toBookingDto(booking);
     }
 
     @Transactional
