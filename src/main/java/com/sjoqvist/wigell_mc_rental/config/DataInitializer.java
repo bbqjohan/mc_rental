@@ -68,7 +68,7 @@ public class DataInitializer {
                     new AppUser(
                             "admin",
                             passwordEncoder.encode("admin"),
-                            Set.of(Role.ADMIN, Role.USER),
+                            Set.of(Role.ADMIN),
                             customers.getFirst());
             AppUser user1 =
                     new AppUser(

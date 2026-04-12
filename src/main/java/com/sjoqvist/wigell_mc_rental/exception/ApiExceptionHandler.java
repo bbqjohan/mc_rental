@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -20,7 +21,7 @@ public class ApiExceptionHandler {
                 new ApiErrorDto(
                         e.getMessage(),
                         LocalDateTime.now(),
-                        "Not Found",
+                        HttpStatus.NOT_FOUND.getReasonPhrase(),
                         req.getRequestURI(),
                         HttpStatus.NOT_FOUND.value()),
                 HttpStatus.NOT_FOUND);
@@ -33,7 +34,7 @@ public class ApiExceptionHandler {
                 new ApiErrorDto(
                         e.getMessage(),
                         LocalDateTime.now(),
-                        "Not Found",
+                        HttpStatus.NOT_FOUND.getReasonPhrase(),
                         req.getRequestURI(),
                         HttpStatus.NOT_FOUND.value()),
                 HttpStatus.NOT_FOUND);
@@ -46,7 +47,7 @@ public class ApiExceptionHandler {
                 new ApiErrorDto(
                         e.getMessage(),
                         LocalDateTime.now(),
-                        "Conflict",
+                        HttpStatus.CONFLICT.getReasonPhrase(),
                         req.getRequestURI(),
                         HttpStatus.CONFLICT.value()),
                 HttpStatus.CONFLICT);
@@ -59,7 +60,7 @@ public class ApiExceptionHandler {
                 new ApiErrorDto(
                         e.getMessage(),
                         LocalDateTime.now(),
-                        "Conflict",
+                        HttpStatus.CONFLICT.getReasonPhrase(),
                         req.getRequestURI(),
                         HttpStatus.CONFLICT.value()),
                 HttpStatus.CONFLICT);
@@ -72,7 +73,7 @@ public class ApiExceptionHandler {
                 new ApiErrorDto(
                         e.getMessage(),
                         LocalDateTime.now(),
-                        "Not Found",
+                        HttpStatus.NOT_FOUND.getReasonPhrase(),
                         req.getRequestURI(),
                         HttpStatus.NOT_FOUND.value()),
                 HttpStatus.NOT_FOUND);
@@ -85,7 +86,7 @@ public class ApiExceptionHandler {
                 new ApiErrorDto(
                         e.getMessage(),
                         LocalDateTime.now(),
-                        "Conflict",
+                        HttpStatus.CONFLICT.getReasonPhrase(),
                         req.getRequestURI(),
                         HttpStatus.CONFLICT.value()),
                 HttpStatus.CONFLICT);
@@ -98,7 +99,7 @@ public class ApiExceptionHandler {
                 new ApiErrorDto(
                         e.getMessage(),
                         LocalDateTime.now(),
-                        "Not Found",
+                        HttpStatus.NOT_FOUND.getReasonPhrase(),
                         req.getRequestURI(),
                         HttpStatus.NOT_FOUND.value()),
                 HttpStatus.NOT_FOUND);
@@ -111,10 +112,23 @@ public class ApiExceptionHandler {
                 new ApiErrorDto(
                         e.getMessage(),
                         LocalDateTime.now(),
-                        "Conflict",
+                        HttpStatus.CONFLICT.getReasonPhrase(),
                         req.getRequestURI(),
                         HttpStatus.CONFLICT.value()),
                 HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(value = AccessDeniedException.class)
+    public ResponseEntity<ApiErrorDto> handleAccessDeniedException(
+            AccessDeniedException e, HttpServletRequest req) {
+        return new ResponseEntity<>(
+                new ApiErrorDto(
+                        e.getMessage(),
+                        LocalDateTime.now(),
+                        HttpStatus.FORBIDDEN.getReasonPhrase(),
+                        req.getRequestURI(),
+                        HttpStatus.FORBIDDEN.value()),
+                HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(value = Exception.class)
@@ -123,7 +137,7 @@ public class ApiExceptionHandler {
                 new ApiErrorDto(
                         e.getMessage(),
                         LocalDateTime.now(),
-                        "Internal Server Error",
+                        HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
                         req.getRequestURI(),
                         HttpStatus.INTERNAL_SERVER_ERROR.value()),
                 HttpStatus.INTERNAL_SERVER_ERROR);

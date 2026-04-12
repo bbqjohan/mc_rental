@@ -11,8 +11,11 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/bookings")
@@ -24,13 +27,21 @@ public class BookingController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<BookingDto>> findAll(Pageable pageable) {
         return ResponseEntity.ok(bookingService.findAll(pageable));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BookingDto> findAll(@PathVariable Long id) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<BookingDto> findById(@PathVariable Long id) {
         return ResponseEntity.ok(bookingService.findById(id));
+    }
+
+    @GetMapping(params = "customerId")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<List<BookingDto>> findAllByCustomerId(@RequestParam Long customerId) {
+        return ResponseEntity.ok(bookingService.findAllByCustomerId(customerId));
     }
 
     @PostMapping

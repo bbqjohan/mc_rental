@@ -7,6 +7,7 @@ import com.sjoqvist.wigell_mc_rental.dto.BookingUpdateDto;
 import com.sjoqvist.wigell_mc_rental.entity.BookingStatus;
 import com.sjoqvist.wigell_mc_rental.exception.*;
 import com.sjoqvist.wigell_mc_rental.mapper.BookingMapper;
+import com.sjoqvist.wigell_mc_rental.repository.AppUserRepo;
 import com.sjoqvist.wigell_mc_rental.repository.BikeRepo;
 import com.sjoqvist.wigell_mc_rental.repository.BookingRepo;
 import com.sjoqvist.wigell_mc_rental.repository.CustomerRepo;
@@ -15,10 +16,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -28,16 +34,19 @@ public class BookingServiceImpl implements BookingService {
     private final CustomerRepo customerRepo;
     private final BookingRepo bookingRepo;
     private final BookingPriceCalculator bookingPriceCalculator;
+    private final AppUserRepo appUserRepo;
 
     public BookingServiceImpl(
             BikeRepo bikeRepo,
             CustomerRepo customerRepo,
             BookingRepo bookingRepo,
-            BookingPriceCalculator bookingPriceCalculator) {
+            BookingPriceCalculator bookingPriceCalculator,
+            AppUserRepo appUserRepo) {
         this.bikeRepo = bikeRepo;
         this.customerRepo = customerRepo;
         this.bookingRepo = bookingRepo;
         this.bookingPriceCalculator = bookingPriceCalculator;
+        this.appUserRepo = appUserRepo;
     }
 
     @Transactional
@@ -115,6 +124,25 @@ public class BookingServiceImpl implements BookingService {
         var entity = bookingRepo.findById(id).orElseThrow(() -> new BookingNotFoundException(id));
 
         return BookingMapper.toBookingDto(entity);
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookingDto> findAllByCustomerId(Long customerId) {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        var username = securityContext.getAuthentication().getName();
+
+        var user =
+                appUserRepo
+                        .findByUsername(username)
+                        .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        if (!user.getCustomer().getId().equals(customerId)) {
+            throw new AccessDeniedException("You cannot view other customers' bookings");
+        }
+
+        return bookingRepo.findAllByCustomerId(customerId).stream()
+                .map(BookingMapper::toBookingDto)
+                .toList();
     }
 
     @Transactional
@@ -220,12 +248,6 @@ public class BookingServiceImpl implements BookingService {
             throw e;
         }
     }
-
-    //    private void assertBikeIsAvailable(Bike bike) {
-    //        if (bike.getStatus().equals(BikeStatus.UNAVAILABLE)) {
-    //            throw new BikeNotAvailableException(bike.getId());
-    //        }
-    //    }
 
     private void assertFromDateNotBeforeToday(LocalDate from) {
         if (from.isBefore(LocalDate.now())) {
