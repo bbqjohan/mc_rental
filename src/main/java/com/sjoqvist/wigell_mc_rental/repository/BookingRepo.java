@@ -21,8 +21,10 @@ public interface BookingRepo extends JpaRepository<Booking, Long> {
 """
     SELECT b FROM Booking b
     WHERE b.bike.id = :bikeId
+      AND b.id <> :bookingId
       AND b.fromDate <= :toDate
       AND b.toDate >= :fromDate
 """)
-    List<Booking> findConflictingBookings(Long bikeId, LocalDate fromDate, LocalDate toDate);
+    List<Booking> findConflictingBookings(
+            Long bikeId, Long bookingId, LocalDate fromDate, LocalDate toDate);
 }

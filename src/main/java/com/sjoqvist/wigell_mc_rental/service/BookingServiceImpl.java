@@ -72,7 +72,7 @@ public class BookingServiceImpl implements BookingService {
 
             boolean hasConflict =
                     !bookingRepo
-                            .findConflictingBookings(bike.getId(), dto.from(), dto.to())
+                            .findConflictingBookings(bike.getId(), -1L, dto.from(), dto.to())
                             .isEmpty();
 
             if (hasConflict) {
@@ -151,7 +151,10 @@ public class BookingServiceImpl implements BookingService {
             }
 
             boolean hasConflict =
-                    !bookingRepo.findConflictingBookings(newBike.getId(), newFrom, newTo).isEmpty();
+                    !bookingRepo
+                            .findConflictingBookings(
+                                    newBike.getId(), booking.getId(), newFrom, newTo)
+                            .isEmpty();
 
             if (hasConflict) {
                 throw new IllegalStateException("Bike is not available for the selected dates");
@@ -217,7 +220,10 @@ public class BookingServiceImpl implements BookingService {
             }
 
             boolean hasConflict =
-                    !bookingRepo.findConflictingBookings(newBike.getId(), newFrom, newTo).isEmpty();
+                    !bookingRepo
+                            .findConflictingBookings(
+                                    newBike.getId(), booking.getId(), newFrom, newTo)
+                            .isEmpty();
 
             if (hasConflict) {
                 throw new IllegalStateException("Bike is not available for the selected dates");

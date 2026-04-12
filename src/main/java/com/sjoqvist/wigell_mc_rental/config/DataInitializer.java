@@ -114,7 +114,9 @@ public class DataInitializer {
             // ==================================================================
 
             var bookingBike1 = bikes.getFirst();
-            var dates1 = new LocalDate[] {LocalDate.now(), LocalDate.now()};
+            var dates1 =
+                    new LocalDate[] {LocalDate.parse("2026-05-05"), LocalDate.parse("2026-05-10")};
+
             var booking1 =
                     new Booking(
                             bookingBike1,
@@ -124,29 +126,28 @@ public class DataInitializer {
                             bookingPriceCalculator.calculateTotalPrice(
                                     dates1[0], dates1[1], bookingBike1));
 
-            var bookingBike2 = bikes.get(1);
             var dates2 =
-                    new LocalDate[] {LocalDate.now().minusDays(10), LocalDate.now().minusDays(5)};
+                    new LocalDate[] {LocalDate.parse("2026-05-15"), LocalDate.parse("2026-05-20")};
             var booking2 =
                     new Booking(
-                            bookingBike2,
+                            bookingBike1,
                             customers.get(2),
                             dates2[0],
                             dates2[1],
                             bookingPriceCalculator.calculateTotalPrice(
-                                    dates2[0], dates2[1], bookingBike2));
+                                    dates2[0], dates2[1], bookingBike1));
 
-            var bookingBike3 = bikes.get(2);
+            var bookingBike2 = bikes.get(1);
             var dates3 =
-                    new LocalDate[] {LocalDate.now().plusDays(10), LocalDate.now().plusDays(15)};
+                    new LocalDate[] {LocalDate.parse("2026-05-10"), LocalDate.parse("2026-05-20")};
             var booking3 =
                     new Booking(
-                            bookingBike3,
+                            bookingBike2,
                             customers.get(2),
                             dates3[0],
                             dates3[1],
                             bookingPriceCalculator.calculateTotalPrice(
-                                    dates3[0], dates3[1], bookingBike3));
+                                    dates3[0], dates3[1], bookingBike2));
 
             bookingRepo.saveAll(List.of(booking1, booking2, booking3));
         };
