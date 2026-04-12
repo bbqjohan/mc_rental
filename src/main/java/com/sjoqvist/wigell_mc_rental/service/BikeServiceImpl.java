@@ -36,7 +36,7 @@ public class BikeServiceImpl implements BikeService {
     }
 
     @Transactional
-    public BikeDto create(BikeDtoCreate dto) {
+    public BikeDto create(BikeCreateDto dto) {
         try {
             log.info("Creating bike.");
 
@@ -67,7 +67,7 @@ public class BikeServiceImpl implements BikeService {
     }
 
     @Transactional
-    public BikeDto update(Long id, BikeDtoUpdate dto) {
+    public BikeDto update(Long id, BikeUpdateDto dto) {
         try {
             log.info("Updating bike. id={}", id);
             var entity = bikeRepo.findById(id).orElseThrow(() -> new BikeNotFoundException(id));

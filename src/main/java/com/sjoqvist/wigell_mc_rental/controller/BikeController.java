@@ -1,8 +1,8 @@
 package com.sjoqvist.wigell_mc_rental.controller;
 
+import com.sjoqvist.wigell_mc_rental.dto.BikeCreateDto;
 import com.sjoqvist.wigell_mc_rental.dto.BikeDto;
-import com.sjoqvist.wigell_mc_rental.dto.BikeDtoCreate;
-import com.sjoqvist.wigell_mc_rental.dto.BikeDtoUpdate;
+import com.sjoqvist.wigell_mc_rental.dto.BikeUpdateDto;
 import com.sjoqvist.wigell_mc_rental.service.BikeService;
 
 import jakarta.validation.Valid;
@@ -34,7 +34,7 @@ public class BikeController {
     }
 
     @PostMapping
-    public ResponseEntity<BikeDto> createBike(@RequestBody @Valid BikeDtoCreate dto) {
+    public ResponseEntity<BikeDto> createBike(@RequestBody @Valid BikeCreateDto dto) {
         var entity = bikeService.create(dto);
         var location =
                 ServletUriComponentsBuilder.fromCurrentRequest()
@@ -47,7 +47,7 @@ public class BikeController {
 
     @PutMapping("/{id}")
     public ResponseEntity<BikeDto> updateBike(
-            @PathVariable Long id, @RequestBody @Valid BikeDtoUpdate dto) {
+            @PathVariable Long id, @RequestBody @Valid BikeUpdateDto dto) {
         return ResponseEntity.ok(bikeService.update(id, dto));
     }
 
