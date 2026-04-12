@@ -135,6 +135,47 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Transactional
+    public void removeAddressFromCustomer(Long customerId, Long addressId) {
+        try {
+            log.info(
+                    "Deleting customer address. customerId={}, addressId={}",
+                    customerId,
+                    addressId);
+
+            var customer =
+                    customerRepo
+                            .findById(customerId)
+                            .orElseThrow(() -> new CustomerNotFoundException(customerId));
+
+            if (customer.getAddresses().isEmpty()) {
+                throw new AddressNotFoundException(addressId);
+            }
+
+            for (var address : customer.getAddresses()) {
+                if (address.getId().equals(addressId)) {
+                    customer.getAddresses().remove(address);
+                    break;
+                } else {
+                    throw new AddressNotFoundException(addressId);
+                }
+            }
+
+            customerRepo.save(customer);
+
+            log.info(
+                    "Successfully deleted customer address. customerId={}, addressId={}",
+                    customerId,
+                    addressId);
+        } catch (Exception e) {
+            log.error(
+                    "Failed to delete customer address. customerId={}, addressId={}",
+                    customerId,
+                    addressId);
+            throw e;
+        }
+    }
+
+    @Transactional
     public AddressDto addAddressToCustomer(Long customerId, AddressCreateDto addressDto) {
         try {
             log.info("Adding address to customer. id={}", customerId);

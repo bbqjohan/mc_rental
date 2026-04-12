@@ -17,4 +17,6 @@ public interface CustomerService {
     void delete(Long id);
 
     AddressDto addAddressToCustomer(Long customerId, AddressCreateDto addressDto);
+
+    void removeAddressFromCustomer(Long customerId, Long addressId);
 }

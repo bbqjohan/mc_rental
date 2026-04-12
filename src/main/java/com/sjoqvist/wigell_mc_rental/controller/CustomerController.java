@@ -51,8 +51,9 @@ public class CustomerController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteCustomer(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
         customerService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{customerId}/addresses")
@@ -66,5 +67,13 @@ public class CustomerController {
                         .toUri();
 
         return ResponseEntity.created(location).body(saved);
+    }
+
+    @DeleteMapping("/{customerId}/addresses/{addressId}")
+    public ResponseEntity<Void> addAddressToCustomer(
+            @PathVariable Long customerId, @PathVariable Long addressId) {
+        customerService.removeAddressFromCustomer(customerId, addressId);
+
+        return ResponseEntity.noContent().build();
     }
 }
