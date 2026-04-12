@@ -249,6 +249,24 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
+    @Transactional
+    public void delete(Long id) {
+        try {
+            log.info("Deleting booking. id={}", id);
+
+            if (!bookingRepo.existsById(id)) {
+                throw new BookingNotFoundException(id);
+            }
+
+            bookingRepo.deleteById(id);
+
+            log.info("Booking successfully deleted. id={}", id);
+        } catch (Exception e) {
+            log.error("Failed to delete booking. payload={}", id);
+            throw e;
+        }
+    }
+
     private void assertFromDateNotBeforeToday(LocalDate from) {
         if (from.isBefore(LocalDate.now())) {
             throw new InvalidBookingDateException(

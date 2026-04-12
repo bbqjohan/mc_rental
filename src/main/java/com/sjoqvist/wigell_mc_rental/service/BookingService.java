@@ -20,5 +20,5 @@ public interface BookingService {
 
     BookingDto changeOngoingBooking(Long id, BookingPatchDatesDto dto);
 
-    //    void delete(Long id);
+    void delete(Long id);
 }

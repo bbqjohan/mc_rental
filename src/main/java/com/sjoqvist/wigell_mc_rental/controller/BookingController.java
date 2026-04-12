@@ -68,4 +68,11 @@ public class BookingController {
             @PathVariable Long id, @RequestBody @Valid BookingPatchDatesDto dto) {
         return ResponseEntity.ok(bookingService.changeOngoingBooking(id, dto));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<BookingDto> deleteBooking(@PathVariable Long id) {
+        bookingService.delete(id);
+
+        return ResponseEntity.noContent().build();
+    }
 }
