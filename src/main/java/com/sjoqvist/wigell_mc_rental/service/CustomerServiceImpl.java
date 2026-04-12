@@ -52,10 +52,7 @@ public class CustomerServiceImpl implements CustomerService {
             var address =
                     addressRepo
                             .findById(dto.addressId())
-                            .orElseThrow(
-                                    () ->
-                                            AddressNotFoundException.withNotFoundMsg(
-                                                    dto.addressId()));
+                            .orElseThrow(() -> new AddressNotFoundException(dto.addressId()));
 
             if (appUserRepo.existsByUsername(dto.user().username())) {
                 throw new UserExistsException(
@@ -97,10 +94,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Transactional(readOnly = true)
     public CustomerDto findById(Long id) {
-        var entity =
-                customerRepo
-                        .findById(id)
-                        .orElseThrow(() -> CustomerNotFoundException.withNotFoundMsg(id));
+        var entity = customerRepo.findById(id).orElseThrow(() -> new CustomerNotFoundException(id));
 
         return CustomerMapper.toCustomerDto(entity);
     }
@@ -111,9 +105,7 @@ public class CustomerServiceImpl implements CustomerService {
             log.info("Updating customer. id={}", id);
 
             var entity =
-                    customerRepo
-                            .findById(id)
-                            .orElseThrow(() -> CustomerNotFoundException.withNotFoundMsg(id));
+                    customerRepo.findById(id).orElseThrow(() -> new CustomerNotFoundException(id));
 
             CustomerMapper.update(entity, dto);
             log.info("Customer successfully updated. id={}", id);
@@ -131,7 +123,7 @@ public class CustomerServiceImpl implements CustomerService {
             log.info("Deleting customer. id={}", id);
 
             if (!customerRepo.existsById(id)) {
-                throw CustomerNotFoundException.withNotFoundMsg(id);
+                throw new CustomerNotFoundException(id);
             }
 
             customerRepo.deleteById(id);

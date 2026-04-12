@@ -1,9 +1,5 @@
 package com.sjoqvist.wigell_mc_rental.exception;
 
-/**
- * This exception should be used when a bike entity could not be found when retrieving them from the
- * bike repository. An id is always present and retrievable from this exception class.
- */
 public class BikeNotAvailableException extends RuntimeException {
     private final Long id;
 
