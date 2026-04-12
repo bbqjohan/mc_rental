@@ -25,7 +25,7 @@ public class Address {
     @Column(name = "postal_code", nullable = false, length = 20)
     private String postalCode;
 
-    @OneToMany(mappedBy = "address")
+    @ManyToMany(mappedBy = "addresses")
     private List<Customer> customers;
 
     protected Address() {}

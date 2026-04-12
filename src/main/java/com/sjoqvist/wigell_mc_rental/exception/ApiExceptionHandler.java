@@ -131,15 +131,15 @@ public class ApiExceptionHandler {
                 HttpStatus.FORBIDDEN);
     }
 
-    @ExceptionHandler(value = Exception.class)
-    public ResponseEntity<ApiErrorDto> handleException(Exception e, HttpServletRequest req) {
-        return new ResponseEntity<>(
-                new ApiErrorDto(
-                        e.getMessage(),
-                        LocalDateTime.now(),
-                        HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
-                        req.getRequestURI(),
-                        HttpStatus.INTERNAL_SERVER_ERROR.value()),
-                HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    //    @ExceptionHandler(value = Exception.class)
+    //    public ResponseEntity<ApiErrorDto> handleException(Exception e, HttpServletRequest req) {
+    //        return new ResponseEntity<>(
+    //                new ApiErrorDto(
+    //                        e.getMessage(),
+    //                        LocalDateTime.now(),
+    //                        HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+    //                        req.getRequestURI(),
+    //                        HttpStatus.INTERNAL_SERVER_ERROR.value()),
+    //                HttpStatus.INTERNAL_SERVER_ERROR);
+    //    }
 }

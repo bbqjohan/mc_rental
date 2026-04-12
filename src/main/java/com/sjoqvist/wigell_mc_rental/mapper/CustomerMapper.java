@@ -6,15 +6,23 @@ import com.sjoqvist.wigell_mc_rental.dto.CustomerDtoUpdate;
 import com.sjoqvist.wigell_mc_rental.entity.Address;
 import com.sjoqvist.wigell_mc_rental.entity.Customer;
 
+import java.util.ArrayList;
+
 public final class CustomerMapper {
     private CustomerMapper() {}
 
     public static CustomerDto toCustomerDto(Customer customer) {
-        return new CustomerDto(customer.getId(), customer.getName());
+        return new CustomerDto(
+                customer.getId(),
+                customer.getName(),
+                customer.getAddresses().stream().map(AddressMapper::toAddressDto).toList());
     }
 
     public static Customer fromCustomerDtoCreate(CustomerDtoCreate dto, Address address) {
-        return new Customer(dto.name(), address);
+        var addresses = new ArrayList<Address>();
+        addresses.add(address);
+        
+        return new Customer(dto.name(), addresses);
     }
 
     public static Customer update(Customer entity, CustomerDtoUpdate dto) {

@@ -45,11 +45,11 @@ public class DataInitializer {
             // Customers
             // ==================================================================
 
-            Customer customerAdmin = new Customer("Tomas", addresses.getFirst());
-            Customer customerUser1 = new Customer("Peter", addresses.get(1));
-            Customer customerUser2 = new Customer("Sara", addresses.get(1));
-            Customer customerUser3 = new Customer("Bosse", addresses.get(2));
-            Customer customerUser4 = new Customer("Jörgen", addresses.get(2));
+            Customer customerAdmin = new Customer("Tomas", List.of(addresses.getFirst()));
+            Customer customerUser1 = new Customer("Peter", List.of(addresses.get(1)));
+            Customer customerUser2 = new Customer("Sara", List.of(addresses.get(1)));
+            Customer customerUser3 = new Customer("Bosse", List.of(addresses.get(2)));
+            Customer customerUser4 = new Customer("Jörgen", List.of(addresses.get(2)));
 
             var customers =
                     customerRepo.saveAll(

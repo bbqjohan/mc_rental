@@ -20,9 +20,16 @@ public class Customer {
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "address_id")
-    private Address address;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "customer_address",
+            joinColumns = @JoinColumn(name = "customer_id"),
+            inverseJoinColumns = @JoinColumn(name = "address_id"),
+            uniqueConstraints =
+                    @UniqueConstraint(
+                            name = "unique_customer_address",
+                            columnNames = {"customer_id", "address_id"}))
+    private List<Address> addresses;
 
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Booking> bookings;
@@ -40,9 +47,9 @@ public class Customer {
 
     protected Customer() {}
 
-    public Customer(String name, Address address) {
+    public Customer(String name, List<Address> addresses) {
         this.name = name;
-        this.address = address;
+        this.addresses = addresses;
     }
 
     public Customer(String name) {
@@ -97,11 +104,15 @@ public class Customer {
         this.name = name;
     }
 
-    public Address getAddress() {
-        return address;
+    public List<Address> getAddresses() {
+        return addresses;
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setAddresses(List<Address> addresses) {
+        this.addresses = addresses;
+    }
+
+    public void addAddress(Address address) {
+        this.addresses.add(address);
     }
 }

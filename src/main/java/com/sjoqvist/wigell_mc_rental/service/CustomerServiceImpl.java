@@ -62,7 +62,6 @@ public class CustomerServiceImpl implements CustomerService {
             }
 
             var entity = CustomerMapper.fromCustomerDtoCreate(dto, address);
-            entity.setAddress(address);
 
             var newUser =
                     new AppUser(
@@ -80,6 +79,7 @@ public class CustomerServiceImpl implements CustomerService {
             log.info("Customer successfully created. id={}", entity.getId());
         } catch (Exception e) {
             log.error("Failed to create customer. payload={}, error={}", dto, e.getMessage());
+
             throw e;
         }
 
@@ -148,7 +148,7 @@ public class CustomerServiceImpl implements CustomerService {
                             .findById(customerId)
                             .orElseThrow(() -> new CustomerNotFoundException(customerId));
 
-            customer.setAddress(address);
+            customer.addAddress(address);
             customerRepo.save(customer);
 
             log.info("Successfully added address to customer. id={}", customerId);
