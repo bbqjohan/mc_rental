@@ -44,6 +44,8 @@ public class SecurityConfig {
                                         .hasRole("USER")
                                         .requestMatchers(HttpMethod.GET, "/api/v1/bookings")
                                         .hasAnyRole("USER", "ADMIN")
+                                        .requestMatchers(HttpMethod.GET, "/api/v1/availability")
+                                        .hasRole("USER")
                                         .anyRequest()
                                         .authenticated())
                 .httpBasic(Customizer.withDefaults())
