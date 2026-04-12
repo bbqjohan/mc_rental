@@ -5,7 +5,12 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "address")
+@Table(
+        name = "address",
+        uniqueConstraints =
+                @UniqueConstraint(
+                        name = "unique_address",
+                        columnNames = {"street", "city", "postal_code"}))
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

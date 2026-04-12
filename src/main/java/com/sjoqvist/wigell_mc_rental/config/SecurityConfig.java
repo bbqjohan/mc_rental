@@ -30,7 +30,7 @@ public class SecurityConfig {
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
                         auth ->
-                                auth.requestMatchers("/api/v1/customers")
+                                auth.requestMatchers("/api/v1/customers/**")
                                         .hasRole("ADMIN")
                                         .requestMatchers("/api/v1/bikes")
                                         .hasRole("ADMIN")

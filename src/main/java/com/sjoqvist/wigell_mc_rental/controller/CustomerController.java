@@ -1,8 +1,6 @@
 package com.sjoqvist.wigell_mc_rental.controller;
 
-import com.sjoqvist.wigell_mc_rental.dto.CustomerDto;
-import com.sjoqvist.wigell_mc_rental.dto.CustomerDtoCreate;
-import com.sjoqvist.wigell_mc_rental.dto.CustomerDtoUpdate;
+import com.sjoqvist.wigell_mc_rental.dto.*;
 import com.sjoqvist.wigell_mc_rental.service.CustomerServiceImpl;
 
 import jakarta.validation.Valid;
@@ -55,5 +53,18 @@ public class CustomerController {
     @DeleteMapping("/{id}")
     public void deleteCustomer(@PathVariable Long id) {
         customerService.delete(id);
+    }
+
+    @PostMapping("/{customerId}/addresses")
+    public ResponseEntity<AddressDto> addAddressToCustomer(
+            @PathVariable Long customerId, @RequestBody @Valid AddressCreateDto addressDto) {
+        var saved = customerService.addAddressToCustomer(customerId, addressDto);
+        var location =
+                ServletUriComponentsBuilder.fromCurrentRequest()
+                        .path("/{customerId}")
+                        .buildAndExpand(customerId)
+                        .toUri();
+
+        return ResponseEntity.created(location).body(saved);
     }
 }

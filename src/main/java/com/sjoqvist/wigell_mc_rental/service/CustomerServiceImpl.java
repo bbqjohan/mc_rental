@@ -1,8 +1,7 @@
 package com.sjoqvist.wigell_mc_rental.service;
 
-import com.sjoqvist.wigell_mc_rental.dto.CustomerDto;
-import com.sjoqvist.wigell_mc_rental.dto.CustomerDtoCreate;
-import com.sjoqvist.wigell_mc_rental.dto.CustomerDtoUpdate;
+import com.sjoqvist.wigell_mc_rental.dto.*;
+import com.sjoqvist.wigell_mc_rental.entity.Address;
 import com.sjoqvist.wigell_mc_rental.exception.AddressNotFoundException;
 import com.sjoqvist.wigell_mc_rental.exception.CustomerNotFoundException;
 import com.sjoqvist.wigell_mc_rental.exception.UserExistsException;
@@ -131,6 +130,41 @@ public class CustomerServiceImpl implements CustomerService {
             log.info("Customer successfully deleted. id={}", id);
         } catch (Exception e) {
             log.error("Failed to delete customer. payload={}", id);
+            throw e;
+        }
+    }
+
+    @Transactional
+    public AddressDto addAddressToCustomer(Long customerId, AddressCreateDto addressDto) {
+        try {
+            log.info("Adding address to customer. id={}", customerId);
+
+            var address =
+                    new Address(addressDto.street(), addressDto.city(), addressDto.postalCode());
+            address = addressRepo.save(address);
+
+            var customer =
+                    customerRepo
+                            .findById(customerId)
+                            .orElseThrow(() -> new CustomerNotFoundException(customerId));
+
+            customer.setAddress(address);
+            customerRepo.save(customer);
+
+            log.info("Successfully added address to customer. id={}", customerId);
+
+            return new AddressDto(
+                    address.getId(),
+                    address.getStreet(),
+                    address.getCity(),
+                    address.getPostalCode());
+        } catch (Exception e) {
+            log.error(
+                    "Failed to add address for customer. customerId={}, payload={}, error={}",
+                    customerId,
+                    addressDto,
+                    e.getMessage());
+
             throw e;
         }
     }
