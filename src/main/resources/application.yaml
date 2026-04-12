@@ -33,3 +33,15 @@ logging:
   level:
     root: INFO
     com.sjoqvist.wigell_mc_rental: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when_authorized
+  info:
+    java:
+      enabled: true
