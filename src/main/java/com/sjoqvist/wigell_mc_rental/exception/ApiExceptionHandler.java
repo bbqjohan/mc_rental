@@ -4,6 +4,7 @@ import com.sjoqvist.wigell_mc_rental.dto.ApiErrorDto;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -147,6 +148,19 @@ public class ApiExceptionHandler {
     @ExceptionHandler(value = IllegalArgumentException.class)
     public ResponseEntity<ApiErrorDto> handleIllegalArgumentException(
             IllegalArgumentException e, HttpServletRequest req) {
+        return new ResponseEntity<>(
+                new ApiErrorDto(
+                        e.getMessage(),
+                        LocalDateTime.now(),
+                        HttpStatus.CONFLICT.getReasonPhrase(),
+                        req.getRequestURI(),
+                        HttpStatus.CONFLICT.value()),
+                HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(value = DataIntegrityViolationException.class)
+    public ResponseEntity<ApiErrorDto> handleDataIntegrityViolationException(
+            DataIntegrityViolationException e, HttpServletRequest req) {
         return new ResponseEntity<>(
                 new ApiErrorDto(
                         e.getMessage(),
