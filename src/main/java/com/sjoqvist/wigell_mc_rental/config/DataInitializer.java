@@ -101,11 +101,11 @@ public class DataInitializer {
             // Bikes
             // ==================================================================
 
-            Bike bike1 = new Bike("A", "A", 20d, BikeStatus.UNAVAILABLE);
-            Bike bike2 = new Bike("B", "A", 25d, BikeStatus.AVAILABLE);
-            Bike bike3 = new Bike("C", "B", 30d, BikeStatus.AVAILABLE);
-            Bike bike4 = new Bike("D", "C", 40d, BikeStatus.AVAILABLE);
-            Bike bike5 = new Bike("E", "C", 50d, BikeStatus.AVAILABLE);
+            Bike bike1 = new Bike("A", "A", 20d);
+            Bike bike2 = new Bike("B", "A", 25d);
+            Bike bike3 = new Bike("C", "B", 30d);
+            Bike bike4 = new Bike("D", "C", 40d);
+            Bike bike5 = new Bike("E", "C", 50d);
 
             var bikes = bikeRepo.saveAll(List.of(bike1, bike2, bike3, bike4, bike5));
 
@@ -122,8 +122,7 @@ public class DataInitializer {
                             dates1[0],
                             dates1[1],
                             bookingPriceCalculator.calculateTotalPrice(
-                                    dates1[0], dates1[1], bookingBike1),
-                            BookingStatus.ACTIVE);
+                                    dates1[0], dates1[1], bookingBike1));
 
             var bookingBike2 = bikes.get(1);
             var dates2 =
@@ -135,8 +134,7 @@ public class DataInitializer {
                             dates2[0],
                             dates2[1],
                             bookingPriceCalculator.calculateTotalPrice(
-                                    dates2[0], dates2[1], bookingBike2),
-                            BookingStatus.COMPLETED);
+                                    dates2[0], dates2[1], bookingBike2));
 
             var bookingBike3 = bikes.get(2);
             var dates3 =
@@ -148,8 +146,7 @@ public class DataInitializer {
                             dates3[0],
                             dates3[1],
                             bookingPriceCalculator.calculateTotalPrice(
-                                    dates3[0], dates3[1], bookingBike3),
-                            BookingStatus.RESERVED);
+                                    dates3[0], dates3[1], bookingBike3));
 
             bookingRepo.saveAll(List.of(booking1, booking2, booking3));
         };

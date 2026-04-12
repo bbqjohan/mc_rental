@@ -4,7 +4,6 @@ import com.sjoqvist.wigell_mc_rental.dto.BookingCreateDto;
 import com.sjoqvist.wigell_mc_rental.dto.BookingDto;
 import com.sjoqvist.wigell_mc_rental.dto.BookingPatchDto;
 import com.sjoqvist.wigell_mc_rental.dto.BookingUpdateDto;
-import com.sjoqvist.wigell_mc_rental.entity.BookingStatus;
 import com.sjoqvist.wigell_mc_rental.exception.*;
 import com.sjoqvist.wigell_mc_rental.mapper.BookingMapper;
 import com.sjoqvist.wigell_mc_rental.repository.AppUserRepo;
@@ -25,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class BookingServiceImpl implements BookingService {
@@ -63,44 +61,27 @@ public class BookingServiceImpl implements BookingService {
                     bikeRepo.findById(dto.bikeId())
                             .orElseThrow(() -> new BikeNotFoundException(dto.bikeId()));
 
-            assertFromDateNotBeforeToday(dto.from());
-            assertToDateNotBeforeFromDate(dto.to(), dto.from());
+            if (dto.from().isBefore(LocalDate.now())) {
+                throw new IllegalArgumentException(
+                        "The from-date cannot be before the today's date.");
+            }
 
-            var bookings =
-                    bookingRepo.findAllByBikeIdAndStatusIn(
-                            dto.bikeId(), Set.of(BookingStatus.ACTIVE, BookingStatus.RESERVED));
+            if (dto.to().isBefore(dto.from())) {
+                throw new IllegalArgumentException("The to-date cannot be before the from-date.");
+            }
 
-            bookings.forEach(
-                    booking -> {
-                        if (!dto.from().isBefore(booking.getFromDate())
-                                && !dto.from().isAfter(booking.getToDate())) {
-                            throw new InvalidBookingDateException(
-                                    String.format(
-                                            "The 'from' date %s is unavailable for bike %d",
-                                            dto.from(), booking.getBike().getId()),
-                                    dto.from());
-                        }
+            boolean hasConflict =
+                    !bookingRepo
+                            .findConflictingBookings(bike.getId(), dto.from(), dto.to())
+                            .isEmpty();
 
-                        if (!dto.to().isBefore(booking.getFromDate())
-                                && !dto.to().isAfter(booking.getToDate())) {
-                            throw new InvalidBookingDateException(
-                                    String.format(
-                                            "The 'to' date %s is unavailable for bike %d",
-                                            dto.to(), booking.getBike().getId()),
-                                    dto.to());
-                        }
-                    });
-
-            var bookingStatus =
-                    dto.from().isEqual(LocalDate.now())
-                            ? BookingStatus.ACTIVE
-                            : BookingStatus.RESERVED;
+            if (hasConflict) {
+                throw new IllegalStateException("Bike is not available for the selected dates");
+            }
 
             var priceTotal = bookingPriceCalculator.calculateTotalPrice(dto.from(), dto.to(), bike);
 
-            var booking =
-                    BookingMapper.fromBookingDtoCreate(
-                            dto, bike, customer, priceTotal, bookingStatus);
+            var booking = BookingMapper.fromBookingDtoCreate(dto, bike, customer, priceTotal);
 
             bikeRepo.save(bike);
             booking = bookingRepo.save(booking);
@@ -170,10 +151,7 @@ public class BookingServiceImpl implements BookingService {
             }
 
             boolean hasConflict =
-                    !bookingRepo
-                            .findConflictingBookings(
-                                    newBike.getId(), booking.getId(), newFrom, newTo)
-                            .isEmpty();
+                    !bookingRepo.findConflictingBookings(newBike.getId(), newFrom, newTo).isEmpty();
 
             if (hasConflict) {
                 throw new IllegalStateException("Bike is not available for the selected dates");
@@ -239,9 +217,7 @@ public class BookingServiceImpl implements BookingService {
             }
 
             boolean hasConflict =
-                    !bookingRepo
-                            .findConflictingBookings(newBike.getId(), bookingId, newFrom, newTo)
-                            .isEmpty();
+                    !bookingRepo.findConflictingBookings(newBike.getId(), newFrom, newTo).isEmpty();
 
             if (hasConflict) {
                 throw new IllegalStateException("Bike is not available for the selected dates");
@@ -280,27 +256,5 @@ public class BookingServiceImpl implements BookingService {
             log.error("Failed to delete booking. payload={}", id);
             throw e;
         }
-    }
-
-    private void assertFromDateNotBeforeToday(LocalDate from) {
-        if (from.isBefore(LocalDate.now())) {
-            throw new InvalidBookingDateException(
-                    String.format(
-                            "The 'from' %s date cannot be before today's date %s",
-                            from, LocalDate.now()),
-                    from);
-        }
-    }
-
-    private void assertToDateNotBeforeFromDate(LocalDate to, LocalDate from) {
-        if (to.isBefore(from)) {
-            throw new InvalidBookingDateException(
-                    String.format("The 'to' date %s cannot be before the 'from' date %s", to, from),
-                    to);
-        }
-    }
-
-    private boolean isDateWithinRange(LocalDate date, LocalDate from, LocalDate to) {
-        return !date.isBefore(from) && !date.isAfter(to);
     }
 }

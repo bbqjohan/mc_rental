@@ -23,17 +23,12 @@ public class Bike {
     @OneToMany(mappedBy = "bike", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Booking> bookings;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private BikeStatus status;
-
     protected Bike() {}
 
-    public Bike(String model, String manufacturer, Double dailyRateSek, BikeStatus status) {
+    public Bike(String model, String manufacturer, Double dailyRateSek) {
         this.model = model;
         this.manufacturer = manufacturer;
         this.dailyRateSek = dailyRateSek;
-        this.status = status;
     }
 
     public Long getId() {
@@ -74,13 +69,5 @@ public class Bike {
 
     public void setDailyRateSek(Double dailyRateSek) {
         this.dailyRateSek = dailyRateSek;
-    }
-
-    public BikeStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(BikeStatus status) {
-        this.status = status;
     }
 }

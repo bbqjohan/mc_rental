@@ -2,7 +2,6 @@ package com.sjoqvist.wigell_mc_rental.mapper;
 
 import com.sjoqvist.wigell_mc_rental.dto.*;
 import com.sjoqvist.wigell_mc_rental.entity.Bike;
-import com.sjoqvist.wigell_mc_rental.entity.BikeStatus;
 
 public final class BikeMapper {
     private BikeMapper() {}
@@ -16,14 +15,13 @@ public final class BikeMapper {
     }
 
     public static Bike fromBikeDtoCreate(BikeDtoCreate dto) {
-        return new Bike(dto.model(), dto.manufacturer(), dto.dailyRateSek(), BikeStatus.AVAILABLE);
+        return new Bike(dto.model(), dto.manufacturer(), dto.dailyRateSek());
     }
 
     public static Bike update(Bike entity, BikeDtoUpdate dto) {
         entity.setModel(dto.model());
         entity.setManufacturer(dto.manufacturer());
         entity.setDailyRateSek(dto.dailyRateSek());
-        entity.setStatus(dto.status());
         return entity;
     }
 }

@@ -34,10 +34,6 @@ public class Booking {
     @Column(name = "price_total_sek", nullable = false)
     private Double priceTotalSek;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private BookingStatus status;
-
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -53,14 +49,12 @@ public class Booking {
             Customer customer,
             LocalDate fromDate,
             LocalDate toDate,
-            Double priceTotalSek,
-            BookingStatus status) {
+            Double priceTotalSek) {
         this.bike = bike;
         this.customer = customer;
         this.fromDate = fromDate;
         this.toDate = toDate;
         this.priceTotalSek = priceTotalSek;
-        this.status = status;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -125,13 +119,5 @@ public class Booking {
 
     public void setPriceTotalSek(Double priceTotalSek) {
         this.priceTotalSek = priceTotalSek;
-    }
-
-    public BookingStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(BookingStatus status) {
-        this.status = status;
     }
 }
