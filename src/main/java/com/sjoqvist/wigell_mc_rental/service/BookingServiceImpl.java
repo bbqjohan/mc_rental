@@ -6,7 +6,6 @@ import com.sjoqvist.wigell_mc_rental.dto.BookingPatchDto;
 import com.sjoqvist.wigell_mc_rental.dto.BookingUpdateDto;
 import com.sjoqvist.wigell_mc_rental.exception.*;
 import com.sjoqvist.wigell_mc_rental.mapper.BookingMapper;
-import com.sjoqvist.wigell_mc_rental.repository.AppUserRepo;
 import com.sjoqvist.wigell_mc_rental.repository.BikeRepo;
 import com.sjoqvist.wigell_mc_rental.repository.BookingRepo;
 import com.sjoqvist.wigell_mc_rental.repository.CustomerRepo;
@@ -16,9 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,19 +28,19 @@ public class BookingServiceImpl implements BookingService {
     private final CustomerRepo customerRepo;
     private final BookingRepo bookingRepo;
     private final BookingPriceCalculator bookingPriceCalculator;
-    private final AppUserRepo appUserRepo;
+    private final UserService userService;
 
     public BookingServiceImpl(
             BikeRepo bikeRepo,
             CustomerRepo customerRepo,
             BookingRepo bookingRepo,
             BookingPriceCalculator bookingPriceCalculator,
-            AppUserRepo appUserRepo) {
+            UserService userService) {
         this.bikeRepo = bikeRepo;
         this.customerRepo = customerRepo;
         this.bookingRepo = bookingRepo;
         this.bookingPriceCalculator = bookingPriceCalculator;
-        this.appUserRepo = appUserRepo;
+        this.userService = userService;
     }
 
     @Transactional
@@ -60,6 +56,10 @@ public class BookingServiceImpl implements BookingService {
             var bike =
                     bikeRepo.findById(dto.bikeId())
                             .orElseThrow(() -> new BikeNotFoundException(dto.bikeId()));
+
+            if (!userService.hasAccess(customer.getId())) {
+                throw new AccessDeniedException("You cannot create a booking for another customer");
+            }
 
             if (dto.from().isBefore(LocalDate.now())) {
                 throw new IllegalArgumentException(
@@ -109,15 +109,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional(readOnly = true)
     public List<BookingDto> findAllByCustomerId(Long customerId) {
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        var username = securityContext.getAuthentication().getName();
-
-        var user =
-                appUserRepo
-                        .findByUsername(username)
-                        .orElseThrow(() -> new UsernameNotFoundException(username));
-
-        if (!user.getCustomer().getId().equals(customerId)) {
+        if (!userService.hasAccess(customerId)) {
             throw new AccessDeniedException("You cannot view other customers' bookings");
         }
 
@@ -187,20 +179,12 @@ public class BookingServiceImpl implements BookingService {
         try {
             log.info("Patching booking. id={}", bookingId);
 
-            SecurityContext securityContext = SecurityContextHolder.getContext();
-            var username = securityContext.getAuthentication().getName();
-
-            var user =
-                    appUserRepo
-                            .findByUsername(username)
-                            .orElseThrow(() -> new UsernameNotFoundException(username));
-
             var booking =
                     bookingRepo
                             .findById(bookingId)
                             .orElseThrow(() -> new BookingNotFoundException(bookingId));
 
-            if (!user.getCustomer().getId().equals(booking.getCustomer().getId())) {
+            if (!userService.hasAccess(booking.getCustomer().getId())) {
                 throw new AccessDeniedException("You cannot change other customers' bookings");
             }
 

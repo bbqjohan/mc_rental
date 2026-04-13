@@ -4,10 +4,7 @@ import com.sjoqvist.wigell_mc_rental.dto.*;
 import com.sjoqvist.wigell_mc_rental.exception.BikeExistsException;
 import com.sjoqvist.wigell_mc_rental.exception.BikeNotFoundException;
 import com.sjoqvist.wigell_mc_rental.mapper.BikeMapper;
-import com.sjoqvist.wigell_mc_rental.repository.AddressRepo;
-import com.sjoqvist.wigell_mc_rental.repository.AppUserRepo;
 import com.sjoqvist.wigell_mc_rental.repository.BikeRepo;
-import com.sjoqvist.wigell_mc_rental.repository.CustomerRepo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,19 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class BikeServiceImpl implements BikeService {
     private static final Logger log = LoggerFactory.getLogger(BikeServiceImpl.class);
-    private final CustomerRepo customerRepo;
-    private final AddressRepo addressRepo;
-    private final AppUserRepo appUserRepo;
     private final BikeRepo bikeRepo;
 
     public BikeServiceImpl(
-            CustomerRepo customerRepo,
-            AddressRepo addressRepo,
-            AppUserRepo appUserRepo,
             BikeRepo bikeRepo) {
-        this.customerRepo = customerRepo;
-        this.addressRepo = addressRepo;
-        this.appUserRepo = appUserRepo;
         this.bikeRepo = bikeRepo;
     }
 

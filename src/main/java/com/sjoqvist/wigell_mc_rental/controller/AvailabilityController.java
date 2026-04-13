@@ -2,7 +2,6 @@ package com.sjoqvist.wigell_mc_rental.controller;
 
 import com.sjoqvist.wigell_mc_rental.dto.BikeDto;
 import com.sjoqvist.wigell_mc_rental.service.AvailabilityService;
-import com.sjoqvist.wigell_mc_rental.service.BikeService;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -14,12 +13,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/availability")
 public class AvailabilityController {
-    private final BikeService bikeService;
     private final AvailabilityService availabilityService;
 
-    public AvailabilityController(
-            BikeService bikeService, AvailabilityService availabilityService) {
-        this.bikeService = bikeService;
+    public AvailabilityController(AvailabilityService availabilityService) {
         this.availabilityService = availabilityService;
     }
 

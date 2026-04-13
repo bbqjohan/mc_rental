@@ -7,15 +7,7 @@ public final class AddressMapper {
     private AddressMapper() {}
 
     public static AddressDto toAddressDto(Address address) {
-        return new AddressDto(address.getId(), address.getStreet(), address.getCity(), address.getPostalCode());
+        return new AddressDto(
+                address.getId(), address.getStreet(), address.getCity(), address.getPostalCode());
     }
-
-//    public static Customer fromCustomerDtoCreate(CustomerDtoCreate dto, Address address) {
-//        return new Customer(dto.name(), address);
-//    }
-//
-//    public static Customer update(Customer entity, CustomerDtoUpdate dto) {
-//        entity.setName(dto.name());
-//        return entity;
-//    }
 }

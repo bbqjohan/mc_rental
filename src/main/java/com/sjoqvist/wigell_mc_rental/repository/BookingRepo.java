@@ -11,10 +11,6 @@ import java.util.List;
 
 @Repository
 public interface BookingRepo extends JpaRepository<Booking, Long> {
-    //    List<Booking> findAllByBikeIdAndStatusIn(Long bikeId, Set<BookingStatus> bookingStatuses);
-
-    //    List<Booking> findAllByBikeIdAndFromDateIsAfter(Long id, LocalDate fromDate);
-
     List<Booking> findAllByCustomerId(Long customerId);
 
     @Query(
