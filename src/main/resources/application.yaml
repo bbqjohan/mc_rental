@@ -13,7 +13,7 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/wigell_mc_db?createDatabaseIfNotExist=true
+    url: jdbc:mysql://localhost:6606/wigell_mc_db?createDatabaseIfNotExist=true
     username: root
     password: root
 
