@@ -12,8 +12,6 @@ import java.util.List;
 
 @Repository
 public interface BikeRepo extends JpaRepository<Bike, Long> {
-    boolean existsByModelAndManufacturer(String model, String manufacturer);
-
     @Query(
 """
     SELECT b FROM Bike b

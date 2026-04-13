@@ -28,10 +28,6 @@ public class BikeServiceImpl implements BikeService {
         try {
             log.info("Creating bike.");
 
-            if (bikeRepo.existsByModelAndManufacturer(dto.model(), dto.manufacturer())) {
-                throw new BikeExistsException(dto.model(), dto.manufacturer());
-            }
-
             var entity = BikeMapper.fromBikeDtoCreate(dto);
             entity = bikeRepo.save(entity);
             log.info("Bike successfully created. id={}", entity.getId());
