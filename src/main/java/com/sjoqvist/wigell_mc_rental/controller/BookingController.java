@@ -1,9 +1,6 @@
 package com.sjoqvist.wigell_mc_rental.controller;
 
-import com.sjoqvist.wigell_mc_rental.dto.BookingCreateDto;
-import com.sjoqvist.wigell_mc_rental.dto.BookingDto;
-import com.sjoqvist.wigell_mc_rental.dto.BookingPatchDto;
-import com.sjoqvist.wigell_mc_rental.dto.BookingUpdateDto;
+import com.sjoqvist.wigell_mc_rental.dto.*;
 import com.sjoqvist.wigell_mc_rental.service.BookingService;
 
 import jakarta.validation.Valid;
@@ -64,7 +61,7 @@ public class BookingController {
     }
 
     @PatchMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<BookingDto> patchBooking(
             @PathVariable Long id, @RequestBody @Valid BookingPatchDto dto) {
         return ResponseEntity.ok(bookingService.patchBooking(id, dto));

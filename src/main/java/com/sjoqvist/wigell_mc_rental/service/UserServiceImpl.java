@@ -29,4 +29,9 @@ public class UserServiceImpl implements UserService {
     public String getUsername() {
         return SecurityContextHolder.getContext().getAuthentication().getName();
     }
+
+    public boolean isAdmin() {
+        return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+    }
 }

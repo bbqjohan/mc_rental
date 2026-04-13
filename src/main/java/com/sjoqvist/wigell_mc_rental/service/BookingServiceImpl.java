@@ -1,9 +1,7 @@
 package com.sjoqvist.wigell_mc_rental.service;
 
-import com.sjoqvist.wigell_mc_rental.dto.BookingCreateDto;
-import com.sjoqvist.wigell_mc_rental.dto.BookingDto;
-import com.sjoqvist.wigell_mc_rental.dto.BookingPatchDto;
-import com.sjoqvist.wigell_mc_rental.dto.BookingUpdateDto;
+import com.sjoqvist.wigell_mc_rental.dto.*;
+import com.sjoqvist.wigell_mc_rental.entity.BookingStatus;
 import com.sjoqvist.wigell_mc_rental.exception.*;
 import com.sjoqvist.wigell_mc_rental.mapper.BookingMapper;
 import com.sjoqvist.wigell_mc_rental.repository.BikeRepo;
@@ -84,6 +82,7 @@ public class BookingServiceImpl implements BookingService {
             var booking = BookingMapper.fromBookingDtoCreate(dto, bike, customer, priceTotal);
 
             bikeRepo.save(bike);
+            booking.setStatus(BookingStatus.ACTIVE);
             booking = bookingRepo.save(booking);
 
             log.info("Successfully created a booking for customer. payload={} ", dto);
@@ -184,8 +183,21 @@ public class BookingServiceImpl implements BookingService {
                             .findById(bookingId)
                             .orElseThrow(() -> new BookingNotFoundException(bookingId));
 
-            if (!userService.hasAccess(booking.getCustomer().getId())) {
+            boolean isAdmin = userService.isAdmin();
+
+            if (!isAdmin && !userService.hasAccess(booking.getCustomer().getId())) {
                 throw new AccessDeniedException("You cannot change other customers' bookings");
+            }
+
+            // Only admin can update the status of the booking.
+            // Admins should not be able to change anything else.
+            if (isAdmin) {
+                if (dto.status() != null) {
+                    booking.setStatus(dto.status());
+                    booking = bookingRepo.save(booking);
+                }
+
+                return BookingMapper.toBookingDto(booking);
             }
 
             var newBike = booking.getBike();

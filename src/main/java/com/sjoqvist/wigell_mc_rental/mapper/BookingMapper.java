@@ -17,14 +17,12 @@ public final class BookingMapper {
                 entity.getFromDate(),
                 entity.getToDate(),
                 entity.getPriceTotalSek(),
-                MoneyConverter.sekToGbp(entity.getPriceTotalSek()));
+                MoneyConverter.sekToGbp(entity.getPriceTotalSek()),
+                entity.getStatus());
     }
 
     public static Booking fromBookingDtoCreate(
-            BookingCreateDto dto,
-            Bike bike,
-            Customer customer,
-            Double priceTotal) {
+            BookingCreateDto dto, Bike bike, Customer customer, Double priceTotal) {
         return new Booking(bike, customer, dto.from(), dto.to(), priceTotal);
     }
 

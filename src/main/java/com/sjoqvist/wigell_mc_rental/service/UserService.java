@@ -4,4 +4,6 @@ public interface UserService {
     boolean hasAccess(Long id);
 
     String getUsername();
+
+    boolean isAdmin();
 }

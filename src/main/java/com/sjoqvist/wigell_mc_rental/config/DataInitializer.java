@@ -125,6 +125,7 @@ public class DataInitializer {
                             dates1[1],
                             bookingPriceCalculator.calculateTotalPrice(
                                     dates1[0], dates1[1], bookingBike1));
+            booking1.setStatus(BookingStatus.ACTIVE);
 
             var dates2 =
                     new LocalDate[] {LocalDate.parse("2026-05-15"), LocalDate.parse("2026-05-20")};
@@ -136,6 +137,7 @@ public class DataInitializer {
                             dates2[1],
                             bookingPriceCalculator.calculateTotalPrice(
                                     dates2[0], dates2[1], bookingBike1));
+            booking2.setStatus(BookingStatus.ACTIVE);
 
             var bookingBike2 = bikes.get(1);
             var dates3 =
@@ -148,6 +150,7 @@ public class DataInitializer {
                             dates3[1],
                             bookingPriceCalculator.calculateTotalPrice(
                                     dates3[0], dates3[1], bookingBike2));
+            booking3.setStatus(BookingStatus.ACTIVE);
 
             bookingRepo.saveAll(List.of(booking1, booking2, booking3));
         };

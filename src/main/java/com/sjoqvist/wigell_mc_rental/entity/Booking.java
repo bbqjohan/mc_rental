@@ -34,6 +34,10 @@ public class Booking {
     @Column(name = "price_total_sek", nullable = false)
     private Double priceTotalSek;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private BookingStatus status;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -119,5 +123,13 @@ public class Booking {
 
     public void setPriceTotalSek(Double priceTotalSek) {
         this.priceTotalSek = priceTotalSek;
+    }
+
+    public BookingStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(BookingStatus status) {
+        this.status = status;
     }
 }
