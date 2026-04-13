@@ -1,11 +1,10 @@
 spring:
-
   application:
     name: wigell_mc_rental
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: false
     properties:
       hibernate:
@@ -14,17 +13,22 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:6606/wigell_mc_db?createDatabaseIfNotExist=true
+    url: jdbc:mysql://localhost:3306/wigell_mc_db?createDatabaseIfNotExist=true
     username: root
     password: root
 
-  security:
-    user:
-      name: user
-      password: user
   sql:
     init:
       mode: always
+
+  boot:
+    admin:
+      client:
+        url: http://localhost:8084/
+        username: admin
+        password: password
+        instance:
+          service-url: http://localhost:8585/
 
 server:
   port: 8585
@@ -38,10 +42,10 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: "*"
   endpoint:
     health:
-      show-details: when_authorized
+      show-details: always
   info:
     java:
       enabled: true
