@@ -30,10 +30,9 @@ public class SecurityConfig {
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
                         auth ->
-                                auth.requestMatchers("/actuator/**").permitAll()
-                                        .requestMatchers("/api/v1/customers/**")
+                                auth.requestMatchers("/api/v1/customers/**")
                                         .hasRole("ADMIN")
-                                        .requestMatchers("/api/v1/bikes")
+                                        .requestMatchers("/api/v1/bikes", "/api/v1/bikes/**")
                                         .hasRole("ADMIN")
                                         .requestMatchers(HttpMethod.PUT, "/api/v1/bookings/**")
                                         .hasRole("ADMIN")
@@ -45,6 +44,8 @@ public class SecurityConfig {
                                         .hasAnyRole("USER", "ADMIN")
                                         .requestMatchers(HttpMethod.GET, "/api/v1/availability")
                                         .hasRole("USER")
+                                        .requestMatchers("/actuator/**")
+                                        .permitAll()
                                         .anyRequest()
                                         .authenticated())
                 .httpBasic(Customizer.withDefaults())
