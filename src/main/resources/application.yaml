@@ -29,6 +29,10 @@ spring:
         password: password
         instance:
           service-url: http://localhost:8585/
+          management-base-url: http://localhost:6085
+          metadata:
+            name: admin
+            password: admin
 
 server:
   port: 8585
@@ -42,10 +46,12 @@ management:
   endpoints:
     web:
       exposure:
-        include: "*"
+        include: "health,info"
   endpoint:
     health:
       show-details: always
   info:
     java:
       enabled: true
+  server:
+    port: 6085
